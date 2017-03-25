@@ -1,11 +1,14 @@
-from load_data import load 
+from load_data import load
 from visualize import vis
-from preprocess_data import preprocess
+from preprocess2_data import preprocess
 
 
 def main():
-	X,Y = load(2000)
-	X = preprocess(X,levels = 5)
-	vis(X,Y)
+    X, Y = load(1)
+    X = preprocess(X, num_levels=2)
+
+    print(X)
+
+    vis(X,Y)
 
 main()
