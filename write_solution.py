@@ -6,8 +6,8 @@ import skimage.color
 
 def write_output_classification(Y, name = "classifcation.txt"):
 	f = open("output/" + name,'w') 
-	for y in Y:
-		f.write(str(y) + "\n")
+	for idx,y in enumerate(Y):
+		f.write(str(idx) + ".jpg " + str(y) + "\n")
 	f.close()
 ##[upper_left_x,upper_left_y,width,height] <- one box
 def write_output_detection(img,bounding_boxes):
