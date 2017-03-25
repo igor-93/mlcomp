@@ -58,3 +58,23 @@ def load(number, preprocessing):
 	print('Positives: ', np.count_nonzero(lbls)/len(lbls))
 
 	return data, lbls
+
+
+def load_big_images(path='data/detection_example/example/'):
+
+	onlyfiles = [join(path, f) for f in listdir(path) if isfile(join(path, f)) and f.endswith('.jpg')]
+
+	imgs = []
+
+	for f in onlyfiles:
+		try:
+			img = io.imread(f)
+			img = rgb2hsv(img)
+			#img = img[:,:,2]
+			#lbls.append(int(labels[i])) 
+		except OSError as err:
+			continue
+
+		imgs.append(img)
+
+	return imgs
