@@ -78,3 +78,15 @@ def load_big_images(path='data/detection_example/example/'):
 		imgs.append(img)
 
 	return imgs
+
+
+def test_green(hsv_img):
+	img = hsv_img[:,:,0]
+	discard = False
+	green = 0.51
+	mask = (img < green + 0.1) & (img > green - 0.1)
+	ratio = np.count_nonzero(mask)/(img.shape[0]*img.shape[1])
+	if ratio >= 0.35:
+		discard = True
+
+	return discard
