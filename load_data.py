@@ -25,15 +25,15 @@ def load(number = 1000):
 	imgs = []
 	test_count = 0
 	discarded = 0
-	for path in paths:
+	for i, path in enumerate(paths):
 		try:
-            
-            img = io.imread(path)
-            img = rgb2hsv(img)
-            img = img[:,:,2]
-            #lbls.append(int(labels[i])) 
-        except OSError as err:
-            continue
+
+			img = io.imread(path)
+			img = rgb2hsv(img)
+			img = img[:,:,2]
+			#lbls.append(int(labels[i])) 
+		except OSError as err:
+			continue
 		# img = rgb2gray(img)
 
 		# remove images which have 45% or more of 0.51+-0.1 (green when viz hsv)
