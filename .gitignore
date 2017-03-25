@@ -1,7 +1,8 @@
-/__pycache__/
+/__pycache__/*
 /data/
 /output/
 /.idea/
 /*.iml
 /.ipynb_checkpoints/
 try.py
+*.pyc
