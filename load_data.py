@@ -3,7 +3,7 @@ from skimage.color import rgb2hsv
 import os
 import gc
 
-def load(numer = 1000):
+def load(number = 1000):
 	load_file = 'data/train_data/train_image.txt'
 	label_file = 'data/train_data/train_label.txt'
 	load_f = open(load_file, 'rb')
@@ -25,7 +25,7 @@ def load(numer = 1000):
 			continue
 		img = io.imread(path)
 		img = rgb2hsv(img)
-		img = img[:,:,0]
+		img = img[:,:,1]
 		
 		imgs.append(img)
 		if test_count % 200 == 0:

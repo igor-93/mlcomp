@@ -3,7 +3,7 @@ from skimage.transform import pyramid_gaussian
 
 def preprocess(X, levels  = 3):
 	w = len(X)
-	h = levels * 5
+	h = (levels + 1) * 5
 	ft_matrix = np.zeros((w,h))
 	for idx,x in enumerate(X):
 		ft = []
