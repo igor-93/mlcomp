@@ -30,7 +30,7 @@ def preprocess_image(image, min_level, max_level):
 	return features
 
 def preprocess_image_partial(image, min_level, max_level):
-	return preprocess_partial(np.cumsum(np.cumsum(image, axis=0), axis=1))
+	return preprocess_partial(np.cumsum(np.cumsum(image, axis=0), axis=1), min_level, max_level)
 
 def preprocess_partial(partial, min_level, max_level):
 	features = np.ndarray((0))
