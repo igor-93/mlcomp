@@ -1,37 +1,55 @@
 import numpy as np
-from skimage.transform import pyramid_gaussian
 
-def preprocess(X, levels  = 3):
-	w = len(X)
-	h = (levels + 1) * 5
-	ft_matrix = np.zeros((w,h))
-	for idx,x in enumerate(X):
-		ft = []
-		pyramid = tuple(pyramid_gaussian(x,max_layer = levels))
-		for idx_img,img in enumerate(pyramid):
-			ft.append(extract_features(img))
-		ft_matrix[idx] = np.array(ft).flatten()
-	return ft_matrix
+
+def preprocess(X, num_levels=3, start_level=0):
+	return [preprocess_image(i, start_level, start_level + num_levels) for i in X]
+
+
+def preprocess_image(image, min_level, max_level):
+	features = np.ndarray((0))
+
+	image_size = image[0].shape[0]
+
+	num_pixels = (image_size * image_size)
+
+	for level in range(min_level, max_level):
+		num_patches = 2 ** level
+		patch_size = image_size // num_patches
+
+		for i in range(num_patches):
+			for j in range(num_patches):
+				x = patch_size * i
+				y = patch_size * j
+
+				patch = image[x:x + patch_size, y:y + patch_size]
+
+				filtered = extract_features(patch) / num_pixels
+
+				features = np.concatenate((features, filtered))
+
+	return features
 
 
 def extract_features(img):
-	
-	
-	w,h = img.shape
-	ft = [np.sum(img[:w//2,:]) - np.sum(img[w//2:,:])]
-	ft.append(np.sum(img[:,:h//2]) - np.sum(img[:,h//2:]))
-	
-	sl =  np.sum(img[:w//3,:]) - np.sum(img[w//3:w//3*2,:]) + np.sum(img[w//3*2:,:])
-	ft.append(sl)
-	
-	sl = np.sum(img[:,:h//3]) - np.sum(img[:,h//3:h//3*2]) + np.sum(img[:,h//3*2:])
+	(w, h) = img.shape
+
+	w2 = w // 2
+	w3 = w // 3
+	h2 = h // 2
+	h3 = h // 3
+
+	ft = [np.sum(img[:w2, :]) - np.sum(img[w2:, :])]
+	ft.append(np.sum(img[:, :h2]) - np.sum(img[:, h2:]))
+
+	sl = np.sum(img[:w3, :]) - np.sum(img[w3:w3 * 2, :]) + np.sum(img[w3 * 2:, :])
 	ft.append(sl)
 
-	sl = np.sum(img[:w//2,:h//2]) + np.sum(img[w//2:,h//2:])
-	sl -= np.sum(img[w//2:,:h//2]) + np.sum(img[:w//2,h//2:])
+	sl = np.sum(img[:, :h3]) - np.sum(img[:, h3:h3 * 2]) + np.sum(img[:, h3 * 2:])
+	ft.append(sl)
+
+	sl = np.sum(img[:w2, :h2]) + np.sum(img[w2:, h2:])
+	sl -= np.sum(img[w2:, :h2]) + np.sum(img[:w2, h2:])
 
 	ft.append(sl)
-	
+
 	return np.array(ft)
- 	
-
