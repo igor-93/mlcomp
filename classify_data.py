@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 n_estimators = 1000
 classifier = RandomForestClassifier(n_estimators=n_estimators,class_weight = "balanced")
-box_sizes = #[200] [32,64]
+box_sizes = [32,64]
 min_certainty = 0.5
 slide_advance = 25
 max_level = 3
@@ -31,7 +31,7 @@ def extract_boxes(images):
 	for im in images:
 		sub_box = []
 		w,h,channels = im.shape
-		box_sizes = calculate_box_sizes(w,h)
+		#box_sizes = calculate_box_sizes(w,h)
 		for s in box_sizes:
 				x_range = range( (w - s) // slide_advance ) 
 				y_range = range( (h - s) // slide_advance )
