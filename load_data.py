@@ -3,6 +3,9 @@ from skimage.color import rgb2hsv
 import os
 import gc
 
+from skimage.color.colorconv import rgb2gray
+
+
 def load(number = 1000):
 	load_file = 'data/train_data/train_image.txt'
 	label_file = 'data/train_data/train_label.txt'
@@ -26,7 +29,9 @@ def load(number = 1000):
 		img = io.imread(path)
 		img = rgb2hsv(img)
 		img = img[:,:,1]
-		
+
+        # img = rgb2gray(img)
+
 		imgs.append(img)
 		if test_count % 200 == 0:
 			print('Loaded '+str(test_count)+' images')
