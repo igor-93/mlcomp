@@ -2,6 +2,10 @@ from skimage import io
 from skimage.color import rgb2hsv
 import os
 import gc
+import numpy as np
+
+from skimage.color.colorconv import rgb2gray
+
 
 def load(number = 1000):
 	load_file = 'data/train_data/train_image.txt'
@@ -20,13 +24,29 @@ def load(number = 1000):
 
 	imgs = []
 	test_count = 0
+	discarded = 0
 	for path in paths:
 		if '5203' in path or '5930' in path:
 			continue
 		img = io.imread(path)
 		img = rgb2hsv(img)
-		img = img[:,:,1]
-		
+		img = img[:,:,0]
+
+		# img = rgb2gray(img)
+
+		# remove images which have 45% or more of 0.51+-0.1 (green when viz hsv)
+		green = 0.51
+		mask = (img < green + 0.1) & (img > green - 0.1)
+		ratio = np.count_nonzero(mask)/(img.shape[0]*img.shape[1])
+		if ratio >= 0.35:
+			# discard images that have to much hsv-green
+			discarded += 1
+			continue
+
+
+
+
+
 		imgs.append(img)
 		if test_count % 200 == 0:
 			print('Loaded '+str(test_count)+' images')
@@ -35,4 +55,5 @@ def load(number = 1000):
 		if test_count >= number:
 			break
 
+	print('We have discarded ', discarded, ' images')
 	return imgs, labels[:test_count]

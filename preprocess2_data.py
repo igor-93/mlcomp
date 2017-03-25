@@ -12,7 +12,6 @@ def preprocess_image(image, min_level, max_level):
 
     for level in range(min_level, max_level):
         num_patches = 2 ** level
-        print(num_patches)
         patch_size = image_size // num_patches
 
         for i in range(num_patches):
