@@ -30,18 +30,18 @@ def load(number = 1000):
 			continue
 		img = io.imread(path)
 		img = rgb2hsv(img)
-		img = img[:,:,0]
+		img = img[:,:,2]
 
 		# img = rgb2gray(img)
 
 		# remove images which have 45% or more of 0.51+-0.1 (green when viz hsv)
-		green = 0.51
-		mask = (img < green + 0.1) & (img > green - 0.1)
-		ratio = np.count_nonzero(mask)/(img.shape[0]*img.shape[1])
-		if ratio >= 0.35:
+		#green = 0.51
+		#mask = (img < green + 0.1) & (img > green - 0.1)
+		#ratio = np.count_nonzero(mask)/(img.shape[0]*img.shape[1])
+		#if ratio >= 0.35:
 			# discard images that have to much hsv-green
-			discarded += 1
-			continue
+	#		discarded += 1
+	#		continue
 
 
 
