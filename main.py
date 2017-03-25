@@ -3,6 +3,7 @@ from visualize import vis
 from preprocess_data import preprocess_image
 from classify_data import *
 from write_solution import *
+from skimage.transform import pyramid_reduce
 
 import matplotlib.pyplot as plt
 
@@ -10,14 +11,15 @@ import matplotlib.pyplot as plt
 def main():
 	levels = 3
 
-	X, Y = load(2000, lambda x: preprocess_image(x, 0, levels))
+	X, Y = load(1000, lambda x: preprocess_image(x, 0, levels))
 	
 	
 	train(X, Y)
+	print('TRain finished')
 	#evaluate_performance(X,Y)
 	
 	
-	big_images = load_big_images()[:2]
+	big_images = load_big_images()
 	boxes = extract_boxes(big_images)
 	write_output_detection(big_images,boxes)
 

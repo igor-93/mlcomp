@@ -27,44 +27,50 @@ def predict(X):
 
 def extract_boxes(images):
 	boxes = []
+
 	for im in images:
-		data = im[:,:,2]
 		
-		partial = np.cumsum(np.cumsum(data, axis=0), axis=1)
+		coords = map_to_bool(im)
+		centers = kmeans_img(coords)
+		print('KMeans done...')
+		#plt.imshow(im)
+		#plt.scatter(c[:,0], c[:,1], color='yellow')
+		
+		#plt.show()
+		#data = im[:,:,2]
+		w,h, channels = im.shape
+		box_sizes = calculate_box_sizes(w,h)
 		
 		sub_box = []
-		w,h,channels = im.shape
-		box_sizes = calculate_box_sizes(w,h)
-		for s in box_sizes:
-				slide_advance = int(0.2 * s)
-				x_range = range( (w - s) // slide_advance ) 
-				y_range = range( (h - s) // slide_advance )
-				print(len(x_range) * len(y_range),w,h)
-				for x in x_range:
-					for y in y_range :	
-						# Hue in the patch
-						x_min = x*slide_advance
-						y_min = y*slide_advance
-						patch = im[x_min:x_min+s,y_min:y_min+s]
+		for c in centers:
+			
 
-						
-						if(test_green(patch)):
-							continue
-						#X = preprocess_image(patch[:,:,2],min_level,max_level)
-						X = preprocess_partial(partial[x_min:x_min+s,y_min:y_min+s],min_level,max_level)
-						#X = np.hstack([X,hue_histogramm(patch[:,:,0],10)])
-				
-						prob = predict(X.reshape(1,-1))					
-							
-						if prob >= min_certainty:
-							print(prob,x_min,y_min)
-							#plt.imshow(patch)
-							#plt.show()
-							sub_box.append([x_min,y_min,s,s])
-		print(len(sub_box))
+			max_prob = 0
+			best_box = None 
+			for s in box_sizes:
+
+				x = np.max([0,int(c[0]) - s//2])
+				x_max = np.min([w,x + s])
+				y = np.max([0,int(c[1]) - s//2])
+				y_max = np.min([h,y + s])
+				patch = im[x:x_max,y:y_max,:]
+				if ((x_max -x) != (y_max - y)) or x_max -x == 0 or y_max -y == 0:
+					continue
+				print('patch shape', patch.shape, c,im.shape,x,x_max,y,y_max,s)
+
+				X = preprocess_image(patch[:,:,2],0,3)
+				X = np.hstack([X,hue_histogramm(patch[:,:,0],10)])
+				prob = predict(X.reshape(1,-1))
+				if prob > max_prob:
+					best_box = [x,y,x_max - x,y_max -y]
+					max_prob = prob
+			if max_prob > min_certainty:
+				sub_box.append(best_box)
 		boxes.append(sub_box)
+	
 	return boxes
+
 
 def calculate_box_sizes(w,h):
 	mid = int(w/10.0)
-	return [mid -50,mid,mid + 50]
+	return [mid -20,mid,mid + 20]

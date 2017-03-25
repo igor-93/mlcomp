@@ -1,13 +1,15 @@
 from skimage import io
-from skimage.color import rgb2hsv
+from skimage.color import rgb2hsv, hsv2rgb
 import os
 import gc
+import matplotlib.pyplot as plt
 
 
 import numpy as np
-
+from skimage.filters import gaussian
+from skimage.transform import pyramid_reduce
 from skimage.color.colorconv import rgb2gray
-
+from sklearn.cluster import KMeans
 
 def load(number, preprocessing):
 	load_file = 'data/train_data/train_image.txt'
@@ -43,7 +45,7 @@ def load(number, preprocessing):
 		#	lbls.append(int(labels[i]))
 		
 		ft = preprocessing(img[:,:,2])
-		#ft = np.hstack([ft,hue_histogramm(img[:,:,0],10)])
+		ft = np.hstack([ft,hue_histogramm(img[:,:,0],10)])
 
 		data.append(ft)
 
@@ -71,6 +73,7 @@ def load_big_images(path='data/detection_example/example/'):
 	for f in onlyfiles:
 		try:
 			img = io.imread(f)
+			img =  pyramid_reduce(img,2)
 			img = rgb2hsv(img)
 			#img = img[:,:,2]
 			#lbls.append(int(labels[i])) 
@@ -80,6 +83,34 @@ def load_big_images(path='data/detection_example/example/'):
 		imgs.append(img)
 
 	return imgs
+
+
+
+def map_to_bool(img):
+	img = hsv2rgb(img)
+	img = gaussian(img, sigma=7.0)
+	imgR = img[:,:,0] * 256
+	imgG = img[:,:,1] *256
+	imgB = img[:,:,2] *256
+	g = np.bitwise_and( imgG >= 85, imgG <= 219)
+	b =  np.bitwise_and( imgB >=36,  imgB <= 172)
+	gb = np.bitwise_and( g,b)
+	res = np.bitwise_and(imgR >=141, gb)
+
+	#print(np.max(imgR))
+	#plt.imshow(res )
+	#plt.show()
+
+	y,x = np.where(res)
+	coords = np.vstack ([x,y]).T
+	print(coords.shape)
+	return coords
+
+
+def kmeans_img(coords):
+	km = KMeans(60).fit(coords)
+	centers = km.cluster_centers_
+	return centers
 
 
 def test_green(hsv_img):
