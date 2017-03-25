@@ -7,9 +7,9 @@ import matplotlib.pyplot as plt
 
 
 def main():
-	X, Y = load(2000)
+	X, Y = load(3000)
 	for i in range(2,4):
-		X_processed = preprocess(X, num_levels=i)
+		X_processed = preprocess(X, i)
 		learn(X_processed,Y)
 	
 

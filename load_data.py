@@ -56,5 +56,5 @@ def load(number = 1000):
 			break
 
 	print('We have discarded ', discarded, ' images')
-	print('Positives: ', np.count_nonzero(labels[:test_count])/labels[:test_count])
+	print('Positives: ', np.count_nonzero(labels[:test_count])/len(labels[:test_count]))
 	return imgs, labels[:test_count]
