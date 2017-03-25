@@ -2,12 +2,13 @@
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier 
 from sklearn.model_selection import cross_val_score
+from sklearn.linear_model import LogisticRegression
 
 
 #classifier = SVC(gamma=2, C=1)
 
-n_estimators = 150
-classifier = RandomForestClassifier(n_estimators=n_estimators)
+n_estimators = 1000
+classifier = RandomForestClassifier(n_estimators=n_estimators,class_weight = "balanced")
 
 def learn(X, y):
 	
