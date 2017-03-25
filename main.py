@@ -14,10 +14,10 @@ def main():
 	
 	
 	train(X, Y)
-	evaluate_performance(X,Y)
+	#evaluate_performance(X,Y)
 	
 	
-	big_images = load_big_images()
+	big_images = load_big_images()[2:]
 	boxes = extract_boxes(big_images)
 	write_output_detection(big_images,boxes)
 	
