@@ -7,7 +7,7 @@ import numpy as np
 from skimage.color.colorconv import rgb2gray
 
 
-def load(number = 1000):
+def load(number, preprocessing):
 	load_file = 'data/train_data/train_image.txt'
 	label_file = 'data/train_data/train_label.txt'
 	load_f = open(load_file, 'rb')
@@ -18,11 +18,11 @@ def load(number = 1000):
 	#print(paths[0])
 	paths = [os.path.join(str('data/train_data/train/'),str(p.strip())[2:-1] ) for p in paths]
 	#labels = [int(l) for l in labels]
-	lbls = []
 	#print paths
 
 
-	imgs = []
+	lbls = []
+	data = []
 	test_count = 0
 	discarded = 0
 	for i, path in enumerate(paths):
@@ -31,7 +31,7 @@ def load(number = 1000):
 			img = io.imread(path)
 			img = rgb2hsv(img)
 			img = img[:,:,2]
-			#lbls.append(int(labels[i])) 
+			lbls.append(int(labels[i]))
 		except OSError as err:
 			continue
 		# img = rgb2gray(img)
@@ -45,11 +45,8 @@ def load(number = 1000):
 	#		discarded += 1
 	#		continue
 
+		data.append(preprocessing(img))
 
-
-
-
-		yield img, int(labels[i])
 		if test_count % 200 == 0:
 			print('Loaded '+str(test_count)+' images')
 			gc.collect()
@@ -58,5 +55,6 @@ def load(number = 1000):
 			break
 
 	print('We have discarded ', discarded, ' images')
-	print('Positives: ', np.count_nonzero(labels[:test_count])/len(labels[:test_count]))
-	return imgs, labels[:test_count]
+	print('Positives: ', np.count_nonzero(lbls)/len(lbls))
+
+	return data, lbls
