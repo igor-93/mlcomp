@@ -28,17 +28,22 @@ def preprocess_image(image, min_level, max_level):
 def extract_features(img):
     (w, h) = img.shape
 
-    ft = [np.sum(img[:w // 2, :]) - np.sum(img[w // 2:, :])]
-    ft.append(np.sum(img[:, :h // 2]) - np.sum(img[:, h // 2:]))
+    w2 = w // 2
+    w3 = w // 3
+    h2 = h // 2
+    h3 = h // 3
 
-    sl = np.sum(img[:w // 3, :]) - np.sum(img[w // 3:w // 3 * 2, :]) + np.sum(img[w // 3 * 2:, :])
+    ft = [np.sum(img[:w2, :]) - np.sum(img[w2:, :])]
+    ft.append(np.sum(img[:, :h2]) - np.sum(img[:, h2:]))
+
+    sl = np.sum(img[:w3, :]) - np.sum(img[w3:w3 * 2, :]) + np.sum(img[w3 * 2:, :])
     ft.append(sl)
 
-    sl = np.sum(img[:, :h // 3]) - np.sum(img[:, h // 3:h // 3 * 2]) + np.sum(img[:, h // 3 * 2:])
+    sl = np.sum(img[:, :h3]) - np.sum(img[:, h3:h3 * 2]) + np.sum(img[:, h3 * 2:])
     ft.append(sl)
 
-    sl = np.sum(img[:w // 2, :h // 2]) + np.sum(img[w // 2:, h // 2:])
-    sl -= np.sum(img[w // 2:, :h // 2]) + np.sum(img[:w // 2, h // 2:])
+    sl = np.sum(img[:w2, :h2]) + np.sum(img[w2:, h2:])
+    sl -= np.sum(img[w2:, :h2]) + np.sum(img[:w2, h2:])
 
     ft.append(sl)
 
