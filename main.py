@@ -10,16 +10,16 @@ import matplotlib.pyplot as plt
 def main():
 	levels = 3
 
-	X, Y = load(12000, lambda x: preprocess_image(x, 0, levels))
+	X, Y = load(2000, lambda x: preprocess_image(x, 0, levels))
 	
 	
 	train(X, Y)
-	evaluate_performance(X,Y)
+	#evaluate_performance(X,Y)
 	
 	
-	big_images = load_big_images()[2:]
-	#boxes = extract_boxes(big_images)
-	#write_output_detection(big_images,boxes)
+	big_images = load_big_images()[:2]
+	boxes = extract_boxes(big_images)
+	write_output_detection(big_images,boxes)
 
 
 

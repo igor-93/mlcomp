@@ -43,7 +43,8 @@ def load(number, preprocessing):
 		#	lbls.append(int(labels[i]))
 		
 		ft = preprocessing(img[:,:,2])
-		ft = np.hstack([ft,hue_histogramm(img[:,:,0],10)])
+		#ft = np.hstack([ft,hue_histogramm(img[:,:,0],10)])
+
 		data.append(ft)
 
 		if test_count % 200 == 0:

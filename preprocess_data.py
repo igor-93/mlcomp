@@ -81,9 +81,6 @@ def extract_features_partial(part, x0, y0, patch_size):
 	ft.append(sum_part(part, 0, 0, w3, h) - sum_part(part, w3, 0, w3 * 2, h) + sum_part(part, w3 * 2, 0, w, h))
 	ft.append(sum_part(part, 0, 0, w, h3) - sum_part(part, 0, h3, w, h3 * 2) + sum_part(part, 0, h3 * 2, w, h))
 
-	ft.append(sum_part(part, 0, 0, w3, h) - sum_part(part, w3, 0, w3 * 2, h) + sum_part(part, w3 * 2, 0, w, h))
-	ft.append(sum_part(part, 0, 0, w, h3) - sum_part(part, 0, h3, w, h3 * 2) + sum_part(part, 0, h3 * 2, w, h))
-
 	ft.append(sum_part(part, 0, 0, w2, h2) + sum_part(part, w2, h2, w, h) -
 			  sum_part(part, w2, 0, w, h2) - sum_part(part, 0, h2, w2, h))
 

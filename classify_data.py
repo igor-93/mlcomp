@@ -5,15 +5,14 @@ from sklearn.model_selection import cross_val_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.neural_network import BernoulliRBM
 from preprocess_data import preprocess_image
-from load_data import test_green
+from preprocess_data import preprocess_partial
+from load_data import *
 import matplotlib.pyplot as plt
 
 
 n_estimators = 1000
 classifier = RandomForestClassifier(n_estimators=n_estimators,class_weight = "balanced")
-box_sizes = [32,64]
 min_certainty = 0.5
-slide_advance = 25
 max_level = 3
 min_level = 0
 def evaluate_performance(X, y):
@@ -29,10 +28,15 @@ def predict(X):
 def extract_boxes(images):
 	boxes = []
 	for im in images:
+		data = im[:,:,2]
+		
+		partial = np.cumsum(np.cumsum(data, axis=0), axis=1)
+		
 		sub_box = []
 		w,h,channels = im.shape
-		#box_sizes = calculate_box_sizes(w,h)
+		box_sizes = calculate_box_sizes(w,h)
 		for s in box_sizes:
+				slide_advance = int(0.2 * s)
 				x_range = range( (w - s) // slide_advance ) 
 				y_range = range( (h - s) // slide_advance )
 				print(len(x_range) * len(y_range),w,h)
@@ -46,7 +50,10 @@ def extract_boxes(images):
 						
 						if(test_green(patch)):
 							continue
-						X = preprocess_image(patch[:,:,2],min_level,max_level)
+						#X = preprocess_image(patch[:,:,2],min_level,max_level)
+						X = preprocess_partial(partial[x_min:x_min+s,y_min:y_min+s],min_level,max_level)
+						#X = np.hstack([X,hue_histogramm(patch[:,:,0],10)])
+				
 						prob = predict(X.reshape(1,-1))					
 							
 						if prob >= min_certainty:
@@ -58,3 +65,6 @@ def extract_boxes(images):
 		boxes.append(sub_box)
 	return boxes
 
+def calculate_box_sizes(w,h):
+	mid = int(w/10.0)
+	return [mid -50,mid,mid + 50]
