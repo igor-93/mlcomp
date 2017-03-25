@@ -3,7 +3,7 @@ from skimage.color import rgb2hsv
 import os
 import gc
 
-def load():
+def load(numer = 1000):
 	load_file = 'data/train_data/train_image.txt'
 	label_file = 'data/train_data/train_label.txt'
 	load_f = open(load_file, 'rb')
@@ -32,5 +32,7 @@ def load():
 			print('Loaded '+str(test_count)+' images')
 			gc.collect()
 		test_count += 1
+		if test_count >= number:
+			break
 
-	return imgs, labels
+	return imgs, labels[:test_count]
