@@ -1,8 +1,8 @@
 from load_data import load, load_big_images
 from visualize import vis
-from preprocess2_data import preprocess
-from preprocess2_data import preprocess_image
-from classify_data import train
+from preprocess_data import preprocess_image
+from classify_data import *
+from write_solution import *
 
 import matplotlib.pyplot as plt
 
@@ -10,13 +10,16 @@ import matplotlib.pyplot as plt
 def main():
 	levels = 3
 
-	X, Y = load(3000, lambda x: preprocess_image(x, 0, levels))
-
+	X, Y = load(1000, lambda x: preprocess_image(x, 0, levels))
+	
+	
 	train(X, Y)
-
-	# for i in range(2,4):
-	# 	X_processed = preprocess(X, i)
-	# 	learn(X_processed,Y)
+	evaluate_performance(X,Y)
+	
+	
+	big_images = load_big_images()
+	boxes = extract_boxes(big_images)
+	write_output_detection(big_images,boxes)
 	
 
 main()

@@ -5,15 +5,16 @@ from sklearn.model_selection import cross_val_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.neural_network import BernoulliRBM
 from preprocess_data import preprocess_image
+from load_data import test_green
 
 
 n_estimators = 1000
 classifier = RandomForestClassifier(n_estimators=n_estimators,class_weight = "balanced")
-box_sizes = [32,64]
-min_certainty = 0.75
-slide_advance = 10
-level = 3
-
+box_sizes = [250] #[32,64]
+min_certainty = 0.05
+slide_advance = 50
+max_level = 3
+min_level = 0
 def evaluate_performance(X, y):
 	scores = cross_val_score(classifier, X, y, cv=5, scoring='neg_log_loss')
 	print(scores.mean(),scores.std())
@@ -22,7 +23,7 @@ def train(X,y):
 	classifier.fit(X,y)
 
 def predict(X):
-	return classifier.predict_proba(X)
+	return classifier.predict_proba(X)[:,1]
 
 
 
@@ -31,18 +32,24 @@ def extract_boxes(images):
 	boxes = []
 	for im in images:
 		sub_box = []
-		w,h = im.shape
+		w,h,channels = im.shape
 		for s in box_sizes:
-				for x in range( (w - s) // slide_advance ) :
-					for y in range( (h - s) // slide_advance ) :	
+				x_range = range( (w - s) // slide_advance ) 
+				y_range = range( (h - s) // slide_advance )
+				print(len(x_range) * len(y_range),w,h)
+				for x in x_range:
+					for y in y_range :	
 						# Hue in the patch
-						patch = im[x:x+s,y:y+s,0]
-						if(hue_test(patch)):
+						patch = im[x:x+s,y:y+s]
+						if(test_green(patch)):
 							continue
-						patch = preprocess_image(patch,level)
-						prob = predict(patch)							
+						X = preprocess_image(patch[:,:,2],min_level,max_level)
+						prob = predict(X.reshape(1,-1))					
+						
 						if prob >= min_certainty:
-							sub_box.append(x,y,x+s,y+s)
+							print(prob)
+							sub_box.append([x,y,x+s,y+s])
+		print(len(sub_box))
 		boxes.append(sub_box)
 	return boxes
 

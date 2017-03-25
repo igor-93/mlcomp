@@ -2,6 +2,8 @@ from skimage import io
 from skimage.color import rgb2hsv
 import os
 import gc
+
+
 import numpy as np
 
 from skimage.color.colorconv import rgb2gray
@@ -62,7 +64,7 @@ def load(number, preprocessing):
 
 def load_big_images(path='data/detection_example/example/'):
 
-	onlyfiles = [join(path, f) for f in listdir(path) if isfile(join(path, f)) and f.endswith('.jpg')]
+	onlyfiles = [os.path.join(path, f) for f in os.listdir(path) if os.path.isfile(os.path.join(path, f)) and f.endswith('.jpg')]
 
 	imgs = []
 

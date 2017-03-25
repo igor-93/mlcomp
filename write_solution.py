@@ -12,7 +12,7 @@ def write_output_classification(Y, name = "classifcation.txt"):
 ##[upper_left_x,upper_left_y,width,height] <- one box
 def write_output_detection(img,bounding_boxes):
 	for idx in range(len(img)):
-		image = skimage.color.gray2rgb(img[idx])
+		image = skimage.color.hsv2rgb(img[idx])
 		boxes = bounding_boxes[idx]
 		for upper_left_x,upper_left_y,width,height in boxes:
 			r = [upper_left_x,upper_left_x+width,upper_left_x+width,upper_left_x]
