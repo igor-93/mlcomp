@@ -3,6 +3,8 @@ from sklearn.model_selection._split import train_test_split
 from classify_data import *
 from detector import Detector
 from write_solution import *
+import matplotlib.pyplot as plt
+from load_data import stream_load_data_test
 
 import random
 
@@ -47,6 +49,7 @@ def main():
 	X, Y = stream_to_lists(data_stream)  # load(2000, preprocessor)
 
 	X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.33, random_state=4)
+	print('Training...')
 	train(X_train, y_train)
 
 	# test_faces, names = load_images_in_path("data_sync/")
@@ -56,9 +59,32 @@ def main():
 
 	print('Train finished')
 
-	image = load_big_image(3)
-	d = Detector(classifier, preprocessor)
-	boxes = d.detect(image)
+	test_imgs_and_f_names = stream_load_data_test(1000)
+	test_features = []
+	test_names = []
+	for t_img, f_name in test_imgs_and_f_names: 
+		t = preprocessor(t_img)
+		test_features.append(t)
+		test_names.append(f_name)
+
+	print('Running prediction on test data...')
+	predictions = predict(test_features)
+
+	#test_imgs_and_f_names = stream_load_data_test(50)
+	#for i, (t_img, f_name) in enumerate(test_imgs_and_f_names): 
+	#	plt.imshow(t_img)
+	#	plt.title(predictions[i])
+	#	plt.show()
+
+	print('Saving predictions of test data...')
+
+
+	write_output_classification(predictions, test_names)
+
+
+	#image = load_big_image(3)
+	#d = Detector(classifier, preprocessor)
+	#boxes = d.detect(image)
 
 
 # write_output_detection(image, boxes)
