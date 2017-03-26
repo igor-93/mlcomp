@@ -21,7 +21,7 @@ def write_output_detection(img,bounding_boxes):
 			c = [upper_left_y,upper_left_y,upper_left_y+height,upper_left_y+height]
 			rr, cc = polygon_perimeter(r,c,image.shape,clip=True)
 			image[rr,cc] = [0.0,128.0/256.0,0.0]
-		imsave("output/images/pic" + str(idx) + ".jpg",image)
+		imsave("output/images/pic" + str(idx+1) + ".jpg",image)
 	
 		
 			

@@ -67,7 +67,7 @@ def main():
 
 	print('Train finished')
 
-	test_imgs_and_f_names = stream_load_data_test(1000)
+	test_imgs_and_f_names = stream_load_data_test(3000)
 	test_features = []
 	test_names = []
 	for t_img, f_name in test_imgs_and_f_names: 
