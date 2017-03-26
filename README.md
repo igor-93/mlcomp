@@ -1,39 +1,50 @@
-EESTech Challenge 2017
+#EESTech Challenge 2017
 
-# How Do you run the Code
+## How Do you run the Code
 \<python-dist\> main.py
-# What are the Parameters
-levels -> number of levels we go down in the image pyramid
-# What Features did we use
-We did use two kind of features:
+## What are the Parameters
+* levels -> number of levels we go down in the image pyramid
+* bins -> we are concatenating a histogram of the hue of the analyzed picture with the specified number of bins
+* number of randomized, shift-based augmentations for positive samples
+
+## What Features did we use
+We used two kind of features:
 * RGB	
-
 * Hue
-We do a histogram with n bins over the huevalues of the image. This is done because the hue values are distinctive for the faces. 
-#How did we test our Predictions 
-We did use 5-fold cross validation
-# How did we improve the Training Data
-We added transformed face images to the training data. We translate them randomly in order to mirror the reality of face-recognition better.
-# Classes
-* Main runs the main pipeline
-* Detector finds bounding boxes for the faces in the big images
-* Classify Data
-# General Idea of the Pipeline
-* Load the Data
-Data is augmented in the described way and loaded
-* Train Classifier
-We train a Random Forest with the following parameters
-	* n_estimators = 1000
-	* class_weight = 'balanced'
+
+We compute a pyramid of features according to the assignment statement. Based on the 5 masks we compute a 
+'feature pyramid' with three levels for each color channel of the image.
+Additionally, we calculate a n-bin-histogram over the hue-values of the image. This is done because the hue values are distinctive for the faces. 
+
+##How did we test our Predictions 
+We used 5-fold cross validation
+
+## How did we improve the Training Data
+We augmented our data by adding randomly padded and shifted versions of face-positive images. This way, we improve the robustness of our classifier. 
+In fact, this step is crucial regarding our face-detection algorithm: 
+Because it is based on k-means, selected tiles tend to contain not only the face but also some significant amount of background pixels.
+
+## Lost in the Code?
+* load_data.py helper function for streaming and pre-processing the data
+* main.py runs the main pipeline
+* detector.py finds bounding boxes for the faces in the big images
+* classify_data.py contains the classifier definition
+
+## General Idea of the Pipeline
+* Load the data as a stream.
+* Data is augmented depending on its label. (c.f. above)
+* Train Classifier: Random Forest with the following parameters
+    * n_estimators = 1000
+    * class_weight = 'balanced'
 * Classify Images
-* Detection of Bounding Boxes
-This is separated in two parts
-* Find approximate Face Positions with K-means
-We filter the RGB image for the range of skin colour and run k-means on the data points obtained this way.
-* Put Bounding Box around Centroid
-We start enlarging boxes around the centroids and take the box with the largest likelihood
-* Maximum Suppression
-Do the maximum suppression for the bounding boxes to obtain the best positioning for the faces
+* Detection of Bounding Boxes: 
+    * Find approximate Face Positions with K-means: We filter the RGB image for the range of skin colour and run k-means on the data points obtained this way.
+    * Put growing bounding boxes around centroids and compute the score of the box containing a face
+    * Select the best bounding box size based on the maximum score
+    * Discard overlapping and redundant boxes
 
-
-
+## What libraries did we use?
+We used the machine-learning and scientific computing libraries of python, namely:
+* numpy
+* scipy
+* scikit-learn
