@@ -33,16 +33,32 @@ def stream_load_data(number):
 
 
 def stream_load_data_test(number):
+	import re
+
+	def atoi(text):
+		return int(text) if text.isdigit() else text
+
+	def natural_keys(text):
+		'''
+		alist.sort(key=natural_keys) sorts in human order
+		http://nedbatchelder.com/blog/200712/human_sorting.html
+		(See Toothy's implementation in the comments)
+		'''
+		return [ atoi(c) for c in re.split('(\d+)', text) ]
+
+
 	path = 'data/test_data/test/'
 	paths = [ f for f in os.listdir(path) if
 				 os.path.isfile(os.path.join(path, f)) and f.endswith('.jpg')]
 
+	paths.sort(key=natural_keys)
 
 	if len(paths) > number:
 		paths = paths[:number - 1]
 
 	for i, f in enumerate(paths):
 		f = os.path.join(path, f)
+		print(f)
 		try:
 			yield io.imread(f), f  # , path, i
 		except OSError as err:
