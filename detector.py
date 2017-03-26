@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 from skimage.filters import gaussian
 from skimage.transform.pyramids import pyramid_reduce
-from sklearn.cluster import KMeans
+from sklearn.cluster import KMeans,AgglomerativeClustering
 from test import main_remove_overlapping
 
 
