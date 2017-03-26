@@ -71,17 +71,16 @@ def remove_overlapping(boxes, certainties):
 
 # box: x,y,width, height
 # x horizontal
-def main_remove_overlapping(boxes, certs):
+def main_remove_overlapping(boxes, cert):
 
-	# loop for every image
-	for i in range(len(boxes)):
-		curr_boxes = boxes[i]
-		curr_cert = certs[i]
-		# loop until no more overlap
-		while True:
-			curr_boxes, curr_cert, found_overlap = remove_overlapping(curr_boxes, curr_cert)
 
-			if not found_overlap:
-				break
+	curr_boxes = boxes
+	curr_cert = certs
+	# loop until no more overlap
+	while True:
+		curr_boxes, curr_cert, found_overlap = remove_overlapping(curr_boxes, curr_cert)
+
+		if not found_overlap:
+			break
 
 
