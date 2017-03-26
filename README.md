@@ -15,15 +15,16 @@ We did use 5-fold cross validation
 # How did we improve the Training Data
 We added transformed face images to the training data. We translate them randomly in order to mirror the reality of face-recognition better.
 # Classes
-* main runs the main pipeline
-* detector finds bounding boxes for the faces in the big images
+* Main runs the main pipeline
+* Detector finds bounding boxes for the faces in the big images
+* Classify Data
 # General Idea of the Pipeline
-*Load the Data
+* Load the Data
 Data is augmented in the described way and loaded
 * Train Classifier
 We train a Random Forest with the following parameters
-** n_estimators = 1000
-** class_weight = 'balanced'
+	* n_estimators = 1000
+	* class_weight = 'balanced'
 * Classify Images
 * Detection of Bounding Boxes
 This is separated in two parts
