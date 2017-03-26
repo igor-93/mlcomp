@@ -56,7 +56,7 @@ def main():
 
 	print('Train finished')
 
-	image = load_big_image(2)
+	image = load_big_image(3)
 	d = Detector(classifier, preprocessor)
 	boxes = d.detect(image)
 

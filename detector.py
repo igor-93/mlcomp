@@ -1,14 +1,17 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+from skimage.color import rgb2hsv 
 from skimage.filters import gaussian
 from skimage.transform.pyramids import pyramid_reduce
 from sklearn.cluster import KMeans,AgglomerativeClustering
 from test import main_remove_overlapping
 
 
+
 class Detector:
 	debug = True
+	max_centers = 30
 
 	def __init__(self, classifier, preprocessor):
 		self.classifier = classifier
@@ -72,15 +75,25 @@ class Detector:
 
 		return img
 
-	@staticmethod
-	def estimate_face_positions(img):
-		skin_mask = Detector.map_to_bool(img)
-		y, x = np.where(skin_mask)
-		skin_points = np.vstack([x, y]).T
-		return Detector.kmeans(skin_points)
 
 	@staticmethod
-	def map_to_bool(img):
+	def map_to_bool_hsv(img):
+		img = rgb2hsv(img)[:,:,0]
+		skin_mask = img < 0.1
+		return skin_mask
+		
+
+	@staticmethod
+	def estimate_face_positions(img):
+		skin_mask = Detector.map_to_bool_hsv(img)
+		y, x = np.where(skin_mask)
+		skin_points = np.vstack([x, y]).T
+		##Random sample
+		idx = np.random.random(len(skin_points)) >= 0.5		
+		return Detector.kmeans(	skin_points[idx])
+
+	@staticmethod
+	def map_to_bool_rgb(img):
 		#print(img.shape,img.max(),img.min())
 		img = img/img.max()#gaussian(img, sigma=7.0, multichannel=True)
 		#print(img.shape,img.max(),img.min())
@@ -98,7 +111,7 @@ class Detector:
 
 	@staticmethod
 	def kmeans(bool_image):
-		km = KMeans(60).fit(bool_image)
+		km = KMeans(Detector.max_centers).fit(bool_image)
 		return km.cluster_centers_
 
 	@staticmethod
