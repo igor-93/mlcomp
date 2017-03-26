@@ -43,7 +43,7 @@ class Detector:
 				patch = image[x:x + size, y:y + size, :]
 				features = self.preprocessor(patch)
 
-				if self.classifier.predict_proba(features.reshape(1, -1))[:, 1] > 0.3:
+				if self.classifier.predict_proba(features.reshape(1, -1))[:, 1] > 0.1:
 					print("Found face at {} {}".format(y, x))
 					boxes.append([y, x, size, size])
 

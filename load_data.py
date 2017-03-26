@@ -109,6 +109,12 @@ def load_big_image(i, path='data/detection_example/example/'):
 
 # img = rgb2hsv(img)
 
+def load_images_in_path(path):
+	onlyfiles = [os.path.join(path, f) for f in os.listdir(path) if
+				 os.path.isfile(os.path.join(path, f)) and f.endswith('.jpg')]
+
+	return [io.imread(file) for file in onlyfiles], onlyfiles
+
 
 def hue_histogramm(img, bins):
 	return np.histogram(img.flatten(), bins)[0]
