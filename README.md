@@ -15,23 +15,24 @@ We did use 5-fold cross validation
 # How did we improve the Training Data
 We added transformed face images to the training data. We translate them randomly in order to mirror the reality of face-recognition better.
 # Classes
-*main runs the main pipeline
-*detector finds bounding boxes for the faces in the big images
+* main runs the main pipeline
+* detector finds bounding boxes for the faces in the big images
 # General Idea of the Pipeline
 *Load the Data
 Data is augmented in the described way and loaded
-*Train Classifier
+* Train Classifier
 We train a Random Forest with the following parameters
 ** n_estimators = 1000
 ** class_weight = 'balanced'
-*Classify Images
-*Detection of Bounding Boxes
+* Classify Images
+* Detection of Bounding Boxes
 This is separated in two parts
-*Find approximate Face Positions with K-means
+* Find approximate Face Positions with K-means
 We filter the RGB image for the range of skin colour and run k-means on the data points obtained this way.
-*Put Bounding Box around Centroid
+* Put Bounding Box around Centroid
 We start enlarging boxes around the centroids and take the box with the largest likelihood
-*Maximum Suppression
+* Maximum Suppression
 Do the maximum suppression for the bounding boxes to obtain the best positioning for the faces
+
 
 
