@@ -1,4 +1,4 @@
-
+import numpy as np
 # x is horisontal
 # y is vertical
 def do_overlap(ax,ay,aw,ah,bx,by,bw,bh, cert_a, cert_b):
@@ -11,7 +11,7 @@ def do_overlap(ax,ay,aw,ah,bx,by,bw,bh, cert_a, cert_b):
 
 	overlap_ratio = overlaped_area / box_area
 
-	if overlap_ratio >= 0.4:
+	if overlap_ratio >= 0.5:
 		if cert_a > cert_b:
 			return 1
 		else:
@@ -58,15 +58,28 @@ def remove_overlapping(boxes, certainties):
 # box: x,y,width, height
 # x horizontal
 def main_remove_overlapping(boxes, cert):
+	keep_box = len(boxes) * [True]
 
+	for i in range(len(boxes)):
+		for j in range(i):
 
-	curr_boxes = boxes
-	curr_cert = cert
-	# loop until no more overlap
-	while True:
-		curr_boxes, curr_cert, found_overlap = remove_overlapping(curr_boxes, curr_cert)
+			box1 = boxes[i]
+			box2 = boxes[j]
+			if keep_box[i] == False or keep_box[j] == False:
+				continue
+			res = do_overlap(box1[0], box1[1], box1[2], box1[3], box2[0], box2[1], box2[2], box2[3], cert[i], cert[j])
+			if res == 0:
+				#keep_box[i] = True
+				#keep_box[j] = True
+				pass
+			if res == 1:
+				#eep_box[i] = True
+				keep_box[j] = False
+			if res == 2:
+				keep_box[i] = False
+				#keep_box[j] = True
 
-		if not found_overlap:
-			break
+	boxes = np.array(boxes)
+	return boxes[keep_box]
 
 
