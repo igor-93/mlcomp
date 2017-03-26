@@ -5,7 +5,7 @@ from preprocess_data import preprocess_image
 from load_data import *
 
 n_estimators = 1000
-classifier = RandomForestClassifier(n_estimators=n_estimators, class_weight="balanced")
+classifier = RandomForestClassifier(n_estimators=n_estimators, class_weight="balanced",n_jobs = -1)
 min_certainty = 0.5
 max_level = 3
 min_level = 0

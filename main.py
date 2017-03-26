@@ -50,14 +50,14 @@ def augment_stream(stream):
 
 
 def main():
-	data_stream = stream_load_data(10) #Load Data
+	data_stream = stream_load_data(12000) #Load Data
 	data_stream = augment_stream(data_stream)
 	data_stream = preprocess_stream(data_stream, preprocessor)
 
 	X, Y = stream_to_lists(data_stream)  # load(2000, preprocessor)
 
 	#X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.33, random_state=4)
-	#print('Training...')
+	print('Training...')
 	train(X, Y)
 
 	# test_faces, names = load_images_in_path("data_sync/")
@@ -67,7 +67,7 @@ def main():
 
 	print('Train finished')
 
-	test_imgs_and_f_names = stream_load_data_test(10)
+	test_imgs_and_f_names = stream_load_data_test(7000)
 	test_features = []
 	test_names = []
 	for t_img, f_name in test_imgs_and_f_names: 
@@ -83,6 +83,7 @@ def main():
 	write_output_classification(predictions, test_names)
 
 	for i in range(0,20):
+		print(i)
 		image = load_big_image(i)
 		image = Detector.scale_image(image)
 		d = Detector(classifier, preprocessor)

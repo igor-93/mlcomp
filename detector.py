@@ -10,7 +10,7 @@ from test import main_remove_overlapping
 
 
 class Detector:
-	debug = True
+	debug = False
 	max_centers = 40
 
 	def __init__(self, classifier, preprocessor):
