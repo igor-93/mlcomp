@@ -78,8 +78,14 @@ class Detector:
 
 	@staticmethod
 	def map_to_bool_hsv(img):
-		img = rgb2hsv(img)[:,:,0]
-		skin_mask = img < 0.1
+		#fig,(h,a) = plt.subplots(2,1)
+		img = rgb2hsv(img)
+		#h.imshow(img[:,:,0])
+		#s.imshow(img[:,:,1])
+		#v.imshow(img[:,:,2])
+		skin_mask = np.bitwise_and(img[:,:,0] < 0.07,img[:,:,1] < 0.6)
+		plt.imshow(skin_mask)
+		plt.show()		
 		return skin_mask
 		
 
