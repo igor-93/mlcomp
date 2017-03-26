@@ -1,30 +1,34 @@
-from load_data import load, load_big_images
-from visualize import vis
-from preprocess_data import preprocess_image
 from classify_data import *
+from detector import Detector
 from write_solution import *
-from skimage.transform import pyramid_reduce
 
-import matplotlib.pyplot as plt
+levels = 3
+
+
+def preprocessor(image):
+	return preprocess_image(rgb2hsv(image)[:, :, 2], 0, levels)
 
 
 def main():
-	levels = 3
+	image = load_big_image(0)
 
-	X, Y = load(1000, lambda x: preprocess_image(x, 0, levels))
-	
-	
+	X, Y = load(2000, lambda x: preprocess_image(x, 0, levels))
+
 	train(X, Y)
-	print('TRain finished')
-	#evaluate_performance(X,Y)
-	
-	
+	print('Train finished')
+
+	d = Detector(classifier, preprocessor)
+	boxes, image = d.detect(image)
+
+	write_output_detection(image, boxes)
+
+	# evaluate_performance(X,Y)
+
+
+
 	big_images = load_big_images()
 	boxes = extract_boxes(big_images)
-	write_output_detection(big_images,boxes)
+	write_output_detection(big_images, boxes)
 
-
-
-	
 
 main()

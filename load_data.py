@@ -2,14 +2,12 @@ from skimage import io
 from skimage.color import rgb2hsv, hsv2rgb
 import os
 import gc
-import matplotlib.pyplot as plt
 
 
 import numpy as np
 from skimage.filters import gaussian
 from skimage.transform import pyramid_reduce
 from skimage.color.colorconv import rgb2gray
-from sklearn.cluster import KMeans
 
 def load(number, preprocessing):
 	load_file = 'data/train_data/train_image.txt'
@@ -34,8 +32,10 @@ def load(number, preprocessing):
 
 			img = io.imread(path)
 			img = rgb2hsv(img)
+
 			if test_green(img):
 				continue
+
 			lbls.append(int(labels[i]))
 		except OSError as err:
 			continue
@@ -43,9 +43,9 @@ def load(number, preprocessing):
 		#if lbls[-1] == 1:
 		#	data.append(preprocessing(np.fliplr(img)))
 		#	lbls.append(int(labels[i]))
-		
+
 		ft = preprocessing(img[:,:,2])
-		ft = np.hstack([ft,hue_histogramm(img[:,:,0],10)])
+		# ft = np.hstack([ft,hue_histogramm(img[:,:,0],10)])
 
 		data.append(ft)
 
@@ -60,6 +60,13 @@ def load(number, preprocessing):
 	print('Positives: ', np.count_nonzero(lbls)/len(lbls))
 
 	return data, lbls
+
+def load_big_image(i, path='data/detection_example/example/'):
+	onlyfiles = [os.path.join(path, f) for f in os.listdir(path) if os.path.isfile(os.path.join(path, f)) and f.endswith('.jpg')]
+
+	return io.imread(onlyfiles[i])
+	# img = rgb2hsv(img)
+
 
 def hue_histogramm(img,bins):
 	return np.histogram(img.flatten(),bins)[0]
@@ -76,41 +83,13 @@ def load_big_images(path='data/detection_example/example/'):
 			img =  pyramid_reduce(img,2)
 			img = rgb2hsv(img)
 			#img = img[:,:,2]
-			#lbls.append(int(labels[i])) 
+			#lbls.append(int(labels[i]))
 		except OSError as err:
 			continue
 
 		imgs.append(img)
 
 	return imgs
-
-
-
-def map_to_bool(img):
-	img = hsv2rgb(img)
-	img = gaussian(img, sigma=7.0)
-	imgR = img[:,:,0] * 256
-	imgG = img[:,:,1] *256
-	imgB = img[:,:,2] *256
-	g = np.bitwise_and( imgG >= 85, imgG <= 219)
-	b =  np.bitwise_and( imgB >=36,  imgB <= 172)
-	gb = np.bitwise_and( g,b)
-	res = np.bitwise_and(imgR >=141, gb)
-
-	#print(np.max(imgR))
-	#plt.imshow(res )
-	#plt.show()
-
-	y,x = np.where(res)
-	coords = np.vstack ([x,y]).T
-	print(coords.shape)
-	return coords
-
-
-def kmeans_img(coords):
-	km = KMeans(60).fit(coords)
-	centers = km.cluster_centers_
-	return centers
 
 
 def test_green(hsv_img):
