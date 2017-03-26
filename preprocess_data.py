@@ -8,7 +8,7 @@ def preprocess(X, num_levels=3, start_level=0):
 def preprocess_image(image, min_level, max_level):
 	features = np.ndarray((0))
 
-	image_size = image[0].shape[0]
+	image_size = image.shape[0]
 
 	num_pixels = (image_size * image_size)
 
