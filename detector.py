@@ -56,9 +56,11 @@ class Detector:
 				boxes.append(box)
 				probabilities.append(max_prob)
 
-		boxes = main_remove_overlapping(boxes,probabilities)
+		
 
 		if self.debug:
+			self.debug_image(self.render_boxes(image, boxes), centers)
+			boxes = main_remove_overlapping(boxes,probabilities)
 			self.debug_image(self.render_boxes(image, boxes), centers)
 
 		return boxes
@@ -107,12 +109,12 @@ class Detector:
 			c = [min_y, min_y, min_y + h, min_y + h]
 			rr, cc = polygon_perimeter(r, c, image.shape, clip=True)
 
-			image[rr, cc] = [0.0, 128.0 / 256.0, 0.0]
+			image[rr, cc] = [0.0, 128.0, 0.0]
 
 		return image
 
 	@staticmethod
 	def debug_image(image, centers):
-		plt.imshow(image, cmap='gray')
+		plt.imshow(image)
 		plt.scatter(centers[:, 0], centers[:, 1], color='red')
 		plt.show()
