@@ -32,14 +32,6 @@ def stream_load_data(number):
 			print("Loaded {} images".format(i))
 
 
-def augment_stream(stream):
-	for label, image in stream:
-		yield label, image  # always yield this stuff
-
-		if label == 1:  # if we've got a positive sample, yield the mirrored image too
-			yield label, np.fliplr(image)
-
-
 def preprocess_stream(stream, extractor):
 	for label, image in stream:
 		yield label, extractor(image)
