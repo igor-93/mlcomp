@@ -34,15 +34,14 @@ def main():
 	X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.33, random_state=4)
 	train(X_train, y_train)
 
-	test_faces, names = load_images_in_path("data_sync/")
-	print(classifier.predict_proba([preprocessor(f) for f in test_faces]), names)
+	#test_faces, names = load_images_in_path("data_sync/")
+	#print(classifier.predict_proba([preprocessor(f) for f in test_faces]), names)
 
-	evaluate_performance_FPFN(X_test, y_test)
+	#evaluate_performance_FPFN(X_test, y_test)
 
 	print('Train finished')
 
-	image = load_big_image(1)
-
+	image = load_big_image(2)
 	d = Detector(classifier, preprocessor)
 	boxes = d.detect(image)
 

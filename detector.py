@@ -27,12 +27,14 @@ class Detector:
 
 		boxes = []
 		for c in centers:
+			max_prob = 0
+			box = None
 			for size in sizes:
 				size2 = size // 2
 
 				# Find the upper left corner
-				x = max(0, int(c[0]) - size2)
-				y = max(0, int(c[1]) - size2)
+				x = max(0, int(c[1]) - size2)
+				y = max(0, int(c[0]) - size2)				
 
 				# Move the box up / left s.t. it fits into the image
 				if x + size >= image.shape[0]:
@@ -42,10 +44,14 @@ class Detector:
 
 				patch = image[x:x + size, y:y + size, :]
 				features = self.preprocessor(patch)
-
-				if self.classifier.predict_proba(features.reshape(1, -1))[:, 1] > 0.1:
-					print("Found face at {} {}".format(y, x))
-					boxes.append([y, x, size, size])
+				prob = self.classifier.predict_proba(features.reshape(1, -1))[:, 1]
+				if prob > max_prob:
+					max_prob = prob
+					box = [x, y, size, size]
+			if  max_prob > 0.1:
+				print(max_prob)
+				print("Found face at {} {}".format(y, x))
+				boxes.append(box)
 
 		if self.debug:
 			self.debug_image(self.render_boxes(image, boxes), centers)
