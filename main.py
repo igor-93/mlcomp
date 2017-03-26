@@ -4,6 +4,8 @@ from classify_data import *
 from detector import Detector
 from write_solution import *
 
+import random
+
 
 def preprocessor(image):
 	levels = 3
@@ -17,11 +19,24 @@ def preprocessor(image):
 
 
 def augment_stream(stream):
+	def random_shift(image):
+		f = random.choice([20, 40, 60])
+		h = f // 2
+
+		offsets = [((f, 0), (h, h), (0, 0)), ((0, f), (h, h), (0, 0)),
+				   ((h, h), (f, 0), (0, 0)), ((h, h), (0, f), (0, 0)),
+				   ((0, f), (0, f), (0, 0)), ((0, f), (f, 0), (0, 0)),
+				   ((f, 0), (f, 0), (0, 0)), ((f, 0), (0, f), (0, 0))]
+
+		return np.pad(image, random.choice(offsets), 'constant', constant_values=(0.5,))
+
+
 	for label, image in stream:
 		yield label, image  # always yield this stuff
 
-		if label == 1:  # if we've got a positive sample, yield the mirrored image too
-			yield label, np.fliplr(image)
+		if label == 1:
+			for _ in range(4):
+				yield label, random_shift(image)
 
 
 def main():
@@ -34,10 +49,10 @@ def main():
 	X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.33, random_state=4)
 	train(X_train, y_train)
 
-	#test_faces, names = load_images_in_path("data_sync/")
-	#print(classifier.predict_proba([preprocessor(f) for f in test_faces]), names)
+	# test_faces, names = load_images_in_path("data_sync/")
+	# print(classifier.predict_proba([preprocessor(f) for f in test_faces]), names)
 
-	#evaluate_performance_FPFN(X_test, y_test)
+	# evaluate_performance_FPFN(X_test, y_test)
 
 	print('Train finished')
 
