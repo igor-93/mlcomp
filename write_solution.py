@@ -4,11 +4,13 @@ from skimage.io import imsave
 import skimage.color 
 
 
-def write_output_classification(Y, name = "classifcation.txt"):
+def write_output_classification(Y, f_names, name = "classifcation.txt"):
 	f = open("output/" + name,'w') 
-	for idx,y in enumerate(Y):
-		f.write(str(idx) + ".jpg " + str(y) + "\n")
+	for idx,(y,f_name) in enumerate(zip(Y,f_names)):
+		f.write(f_name + ", " + str(y) + "\n")
 	f.close()
+
+
 ##[upper_left_x,upper_left_y,width,height] <- one box
 def write_output_detection(img,bounding_boxes):
 	for idx in range(len(img)):

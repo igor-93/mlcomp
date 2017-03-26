@@ -32,6 +32,26 @@ def stream_load_data(number):
 			print("Loaded {} images".format(i))
 
 
+def stream_load_data_test(number):
+	path = 'data/test_data/test/'
+	paths = [ f for f in os.listdir(path) if
+				 os.path.isfile(os.path.join(path, f)) and f.endswith('.jpg')]
+
+
+	if len(paths) > number:
+		paths = paths[:number - 1]
+
+	for i, f in enumerate(paths):
+		f = os.path.join(path, f)
+		try:
+			yield io.imread(f), f  # , path, i
+		except OSError as err:
+			print("Couldn't load image {}\n Error: {}".format(f, err))
+
+		if i % 200 == 0:
+			print("Loaded {} TEST images".format(i))			
+
+
 def preprocess_stream(stream, extractor):
 	for label, image in stream:
 		yield label, extractor(image)
