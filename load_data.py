@@ -3,87 +3,130 @@ from skimage.color import rgb2hsv, hsv2rgb
 import os
 import gc
 
-
 import numpy as np
-from skimage.filters import gaussian
 from skimage.transform import pyramid_reduce
-from skimage.color.colorconv import rgb2gray
+
+
+def stream_load_data(number):
+	load_file = 'data/train_data/train_image.txt'
+	label_file = 'data/train_data/train_label.txt'
+
+	with open(load_file, 'rb') as load_f:
+		paths = load_f.readlines()
+
+	with open(label_file, 'rb') as label_f:
+		labels = label_f.readlines()
+
+	paths = [os.path.join(str('data/train_data/train/'), str(p.strip())[2:-1]) for p in paths]
+
+	if len(paths) > number:
+		paths = paths[:number - 1]
+
+	for i, (label, path) in enumerate(zip(labels, paths)):
+		try:
+			yield int(label), io.imread(path)  # , path, i
+		except OSError as err:
+			print("Couldn't load image {}\n Error: {}".format(path, err))
+
+		if i % 200 == 0:
+			print("Loaded {} images".format(i))
+
+
+def augment_stream(stream):
+	for label, image in stream:
+		yield label, image  # always yield this stuff
+
+		if label == 1:  # if we've got a positive sample, yield the mirrored image too
+			yield label, np.fliplr(image)
+
+
+def preprocess_stream(stream, extractor):
+	for label, image in stream:
+		yield label, extractor(image)
+
+
+def stream_to_lists(stream):
+	collected_list = list(stream)
+	return [b for a, b in collected_list], [a for a, b in collected_list]
+
 
 def load(number, preprocessing):
 	load_file = 'data/train_data/train_image.txt'
 	label_file = 'data/train_data/train_label.txt'
-	load_f = open(load_file, 'rb')
-	label_f = open(label_file, 'rb')
 
-	paths = load_f.readlines()
-	labels = label_f.readlines()
-	#print(paths[0])
-	paths = [os.path.join(str('data/train_data/train/'),str(p.strip())[2:-1] ) for p in paths]
-	#labels = [int(l) for l in labels]
-	#print paths
+	with open(load_file, 'rb') as load_f:
+		paths = load_f.readlines()
 
+	with open(label_file, 'rb') as label_f:
+		labels = label_f.readlines()
+
+	paths = [os.path.join(str('data/train_data/train/'), str(p.strip())[2:-1]) for p in paths]
 
 	lbls = []
 	data = []
 	test_count = 0
 	discarded = 0
+
 	for i, path in enumerate(paths):
 		try:
 
 			img = io.imread(path)
-			img = rgb2hsv(img)
-
-			if test_green(img):
-				continue
+			# if test_green(img):
+			# 	continue
 
 			lbls.append(int(labels[i]))
 		except OSError as err:
 			continue
 
-		#if lbls[-1] == 1:
+		# if lbls[-1] == 1:
 		#	data.append(preprocessing(np.fliplr(img)))
 		#	lbls.append(int(labels[i]))
 
-		ft = preprocessing(img[:,:,2])
+		ft = preprocessing(img)
 		# ft = np.hstack([ft,hue_histogramm(img[:,:,0],10)])
 
 		data.append(ft)
 
 		if test_count % 200 == 0:
-			print('Loaded '+str(test_count)+' images')
+			print('Loaded ' + str(test_count) + ' images')
 			gc.collect()
 		test_count += 1
 		if test_count >= number:
 			break
 
 	print('We have discarded ', number - len(data), ' images')
-	print('Positives: ', np.count_nonzero(lbls)/len(lbls))
+	print('Positives: ', np.count_nonzero(lbls) / len(lbls))
 
 	return data, lbls
 
+
 def load_big_image(i, path='data/detection_example/example/'):
-	onlyfiles = [os.path.join(path, f) for f in os.listdir(path) if os.path.isfile(os.path.join(path, f)) and f.endswith('.jpg')]
+	onlyfiles = [os.path.join(path, f) for f in os.listdir(path) if
+				 os.path.isfile(os.path.join(path, f)) and f.endswith('.jpg')]
 
 	return io.imread(onlyfiles[i])
-	# img = rgb2hsv(img)
 
 
-def hue_histogramm(img,bins):
-	return np.histogram(img.flatten(),bins)[0]
+# img = rgb2hsv(img)
+
+
+def hue_histogramm(img, bins):
+	return np.histogram(img.flatten(), bins)[0]
+
 
 def load_big_images(path='data/detection_example/example/'):
-
-	onlyfiles = [os.path.join(path, f) for f in os.listdir(path) if os.path.isfile(os.path.join(path, f)) and f.endswith('.jpg')]
+	onlyfiles = [os.path.join(path, f) for f in os.listdir(path) if
+				 os.path.isfile(os.path.join(path, f)) and f.endswith('.jpg')]
 
 	imgs = []
 
 	for f in onlyfiles:
 		try:
 			img = io.imread(f)
-			img =  pyramid_reduce(img,2)
+			img = pyramid_reduce(img, 2)
 			img = rgb2hsv(img)
-			#img = img[:,:,2]
-			#lbls.append(int(labels[i]))
+		# img = img[:,:,2]
+		# lbls.append(int(labels[i]))
 		except OSError as err:
 			continue
 
@@ -93,11 +136,11 @@ def load_big_images(path='data/detection_example/example/'):
 
 
 def test_green(hsv_img):
-	img = hsv_img[:,:,0]
+	img = hsv_img[:, :, 0]
 	discard = False
 	green = 0.51
 	mask = (img < green + 0.1) & (img > green - 0.1)
-	ratio = np.count_nonzero(mask)/(img.shape[0]*img.shape[1])
+	ratio = np.count_nonzero(mask) / (img.shape[0] * img.shape[1])
 	if ratio >= 0.35:
 		discard = True
 
