@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from skimage.filters import gaussian
 from skimage.transform.pyramids import pyramid_reduce
 from sklearn.cluster import KMeans
+from test import main_remove_overlapping
 
 
 class Detector:
@@ -26,6 +27,7 @@ class Detector:
 		sizes = range(min_size, max_size, max(1, (max_size - min_size) // 8))
 
 		boxes = []
+		probabilities = []
 		for c in centers:
 			max_prob = 0
 			box = None
@@ -52,6 +54,9 @@ class Detector:
 				print(max_prob)
 				print("Found face at {} {}".format(y, x))
 				boxes.append(box)
+				probabilities.append(max_prob)
+
+		boxes = main_remove_overlapping(boxes,probabilities)
 
 		if self.debug:
 			self.debug_image(self.render_boxes(image, boxes), centers)
@@ -74,8 +79,9 @@ class Detector:
 
 	@staticmethod
 	def map_to_bool(img):
-		img = gaussian(img, sigma=7.0, multichannel=True)
-
+		#print(img.shape,img.max(),img.min())
+		img = img/img.max()#gaussian(img, sigma=7.0, multichannel=True)
+		#print(img.shape,img.max(),img.min())
 		imgR = img[:, :, 0] * 256
 		imgG = img[:, :, 1] * 256
 		imgB = img[:, :, 2] * 256
