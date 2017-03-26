@@ -11,7 +11,7 @@ from test import main_remove_overlapping
 
 class Detector:
 	debug = True
-	max_centers = 30
+	max_centers = 40
 
 	def __init__(self, classifier, preprocessor):
 		self.classifier = classifier
@@ -53,7 +53,7 @@ class Detector:
 				if prob > max_prob:
 					max_prob = prob
 					box = [x, y, size, size]
-			if  max_prob > 0.1:
+			if  max_prob > 0.5:
 				print(max_prob)
 				print("Found face at {} {}".format(y, x))
 				boxes.append(box)
@@ -91,12 +91,12 @@ class Detector:
 
 	@staticmethod
 	def estimate_face_positions(img):
-		skin_mask = Detector.map_to_bool_hsv(img)
+		skin_mask = Detector.map_to_bool_rgb(img)
 		y, x = np.where(skin_mask)
 		skin_points = np.vstack([x, y]).T
 		##Random sample
-		idx = np.random.random(len(skin_points)) >= 0.5		
-		return Detector.kmeans(	skin_points[idx])
+		# idx = np.random.random(len(skin_points)) >= 0.0
+		return Detector.kmeans(skin_points)
 
 	@staticmethod
 	def map_to_bool_rgb(img):

@@ -13,11 +13,19 @@ def preprocessor(image):
 	levels = 3
 	bins = 10
 
-	hsv_image = rgb2hsv(image)
-	hue_histogram = np.histogram(hsv_image[:, :, 0].flatten(), bins, range=(0.0, 1.0), density=True)[0]
-	feature_pyramid = preprocess_image(hsv_image[:, :, 2], 0, levels)
+	r = image[:,:,0] / 256
+	g = image[:,:,1] / 256
+	b = image[:,:,2] / 256
 
-	return np.hstack([feature_pyramid, hue_histogram])
+	hsv_image = rgb2hsv(image)
+
+	hue_histogram = np.histogram(hsv_image[:, :, 0].flatten(), bins, range=(0.0, 1.0), density=True)[0]
+
+	feature_pyramid_r = preprocess_image(r, 0, levels)
+	feature_pyramid_g = preprocess_image(g, 0, levels)
+	feature_pyramid_b = preprocess_image(b, 0, levels)
+
+	return np.hstack([feature_pyramid_r, feature_pyramid_g, feature_pyramid_b, hue_histogram])
 
 
 def augment_stream(stream):
@@ -37,12 +45,12 @@ def augment_stream(stream):
 		yield label, image  # always yield this stuff
 
 		if label == 1:
-			for _ in range(4):
+			for _ in range(6):
 				yield label, random_shift(image)
 
 
 def main():
-	data_stream = stream_load_data(1000)
+	data_stream = stream_load_data(1500)
 	data_stream = augment_stream(data_stream)
 	data_stream = preprocess_stream(data_stream, preprocessor)
 
