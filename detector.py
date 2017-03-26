@@ -18,7 +18,6 @@ class Detector:
 		self.preprocessor = preprocessor
 
 	def detect(self, image):
-		image = self.scale_image(image)
 		centers = self.estimate_face_positions(image)
 
 		if self.debug:
@@ -54,16 +53,14 @@ class Detector:
 					max_prob = prob
 					box = [x, y, size, size]
 			if  max_prob > 0.5:
-				print(max_prob)
-				print("Found face at {} {}".format(y, x))
+				#print(max_prob)
+				#print("Found face at {} {}".format(y, x))
 				boxes.append(box)
 				probabilities.append(max_prob)
 
 		
-
+		boxes = main_remove_overlapping(boxes,probabilities)
 		if self.debug:
-			self.debug_image(self.render_boxes(image, boxes), centers)
-			boxes = main_remove_overlapping(boxes,probabilities)
 			self.debug_image(self.render_boxes(image, boxes), centers)
 
 		return boxes
@@ -82,7 +79,7 @@ class Detector:
 		img = rgb2hsv(img)
 		#h.imshow(img[:,:,0])
 		#s.imshow(img[:,:,1])
-		#v.imshow(img[:,:,2])
+		#v.imshow(img[:,:,2])f
 		skin_mask = np.bitwise_and(img[:,:,0] < 0.07,img[:,:,1] < 0.6)
 		plt.imshow(skin_mask)
 		plt.show()		
