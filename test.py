@@ -1,16 +1,4 @@
 
-
-def area(a, b):  # returns None if rectangles don't intersect
-
-    dx = min(a.xmax, b.xmax) - max(a.xmin, b.xmin)
-    dy = min(a.ymax, b.ymax) - max(a.ymin, b.ymin)
-    if (dx>=0) and (dy>=0):
-        return dx*dy
-
-print area(ra, rb)
-
-
-
 # x is horisontal
 # y is vertical
 def do_overlap(ax,ay,aw,ah,bx,by,bw,bh, cert_a, cert_b):
@@ -37,8 +25,6 @@ def remove_overlapping(boxes, certainties):
 	found_overlap = False
 	remaining_boxes = []
 	remaining_cert = []
-	for i in range(len(boxes)):
-		boxes[i]  boxes[i+1]
 
 
 	i = 0
@@ -75,7 +61,7 @@ def main_remove_overlapping(boxes, cert):
 
 
 	curr_boxes = boxes
-	curr_cert = certs
+	curr_cert = cert
 	# loop until no more overlap
 	while True:
 		curr_boxes, curr_cert, found_overlap = remove_overlapping(curr_boxes, curr_cert)
