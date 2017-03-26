@@ -10,7 +10,7 @@ def preprocessor(image):
 	bins = 10
 
 	hsv_image = rgb2hsv(image)
-	hue_histogram = np.histogram(hsv_image[:, :, 0].flatten(), bins)[0]
+	hue_histogram = np.histogram(hsv_image[:, :, 0].flatten(), bins, range=(0.0, 1.0), density=True)[0]
 	feature_pyramid = preprocess_image(hsv_image[:, :, 2], 0, levels)
 
 	return np.hstack([feature_pyramid, hue_histogram])
