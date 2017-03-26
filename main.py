@@ -50,15 +50,15 @@ def augment_stream(stream):
 
 
 def main():
-	data_stream = stream_load_data(1500)
+	data_stream = stream_load_data(10) #Load Data
 	data_stream = augment_stream(data_stream)
 	data_stream = preprocess_stream(data_stream, preprocessor)
 
 	X, Y = stream_to_lists(data_stream)  # load(2000, preprocessor)
 
-	X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.33, random_state=4)
-	print('Training...')
-	train(X_train, y_train)
+	#X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.33, random_state=4)
+	#print('Training...')
+	train(X, Y)
 
 	# test_faces, names = load_images_in_path("data_sync/")
 	# print(classifier.predict_proba([preprocessor(f) for f in test_faces]), names)
@@ -67,7 +67,7 @@ def main():
 
 	print('Train finished')
 
-	test_imgs_and_f_names = stream_load_data_test(3000)
+	test_imgs_and_f_names = stream_load_data_test(10)
 	test_features = []
 	test_names = []
 	for t_img, f_name in test_imgs_and_f_names: 
@@ -78,24 +78,19 @@ def main():
 	print('Running prediction on test data...')
 	predictions = predict(test_features)
 
-	#test_imgs_and_f_names = stream_load_data_test(50)
-	#for i, (t_img, f_name) in enumerate(test_imgs_and_f_names): 
-	#	plt.imshow(t_img)
-	#	plt.title(predictions[i])
-	#	plt.show()
-
 	print('Saving predictions of test data...')
-
 
 	write_output_classification(predictions, test_names)
 
+	for i in range(0,20):
+		image = load_big_image(i)
+		image = Detector.scale_image(image)
+		d = Detector(classifier, preprocessor)
+		boxes = d.detect(image)
+		write_output_detection(image, boxes,i)
 
-	#image = load_big_image(3)
-	#d = Detector(classifier, preprocessor)
-	#boxes = d.detect(image)
 
-
-# write_output_detection(image, boxes)
+#
 #
 # # evaluate_performance(X,Y)
 #

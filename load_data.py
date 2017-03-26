@@ -58,7 +58,7 @@ def stream_load_data_test(number):
 
 	for i, f in enumerate(paths):
 		f = os.path.join(path, f)
-		print(f)
+		#print(f)
 		try:
 			yield io.imread(f), f  # , path, i
 		except OSError as err:
@@ -128,9 +128,24 @@ def load(number, preprocessing):
 	return data, lbls
 
 
-def load_big_image(i, path='data/detection_example/example/'):
+def load_big_image(i, path='data/detection_example/'):
+	import re
+
+	def atoi(text):
+		return int(text) if text.isdigit() else text
+
+	def natural_keys(text):
+		'''
+		alist.sort(key=natural_keys) sorts in human order
+		http://nedbatchelder.com/blog/200712/human_sorting.html
+		(See Toothy's implementation in the comments)
+		'''
+		return [ atoi(c) for c in re.split('(\d+)', text) ]
+
 	onlyfiles = [os.path.join(path, f) for f in os.listdir(path) if
 				 os.path.isfile(os.path.join(path, f)) and f.endswith('.jpg')]
+
+	onlyfiles.sort(key=natural_keys)			 
 
 	return io.imread(onlyfiles[i])
 
@@ -147,26 +162,6 @@ def load_images_in_path(path):
 def hue_histogramm(img, bins):
 	return np.histogram(img.flatten(), bins)[0]
 
-
-def load_big_images(path='data/detection_example/example/'):
-	onlyfiles = [os.path.join(path, f) for f in os.listdir(path) if
-				 os.path.isfile(os.path.join(path, f)) and f.endswith('.jpg')]
-
-	imgs = []
-
-	for f in onlyfiles:
-		try:
-			img = io.imread(f)
-			img = pyramid_reduce(img, 2)
-			img = rgb2hsv(img)
-		# img = img[:,:,2]
-		# lbls.append(int(labels[i]))
-		except OSError as err:
-			continue
-
-		imgs.append(img)
-
-	return imgs
 
 
 def test_green(hsv_img):
