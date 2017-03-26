@@ -11,7 +11,8 @@ print area(ra, rb)
 
 
 
-
+# x is horisontal
+# y is vertical
 def do_overlap(ax,ay,aw,ah,bx,by,bw,bh, cert_a, cert_b):
 	box_area = min(aw*ah,bw*bh)
 
@@ -30,10 +31,12 @@ def do_overlap(ax,ay,aw,ah,bx,by,bw,bh, cert_a, cert_b):
 	else:
 		return 0 
 
-
+# box: x,y,width, height
+# x horizontal
 def remove_overlapping(boxes, certainties):
 	found_overlap = False
 	remaining_boxes = []
+	remaining_cert = []
 	for i in range(len(boxes)):
 		boxes[i]  boxes[i+1]
 
@@ -49,14 +52,36 @@ def remove_overlapping(boxes, certainties):
 
 		if res == 0:
 			remaining_boxes.append(box1)
+			remaining_cert.append(certainties[i])
 			#remaining_boxes.append(box2)
 			i += 1
 		if res == 1:
 			remaining_boxes.append(box1)
+			remaining_cert.append(certainties[i])
+			found_overlap = True
 			i += 2
 		if res == 2:
-			remaining_boxes.append(box2)	
+			remaining_boxes.append(box2)
+			remaining_cert.append(certainties[i+1])	
+			found_overlap = True
 			i += 2
 
+	return remaining_boxes, remaining_cert, found_overlap
+
+
+# box: x,y,width, height
+# x horizontal
+def main_remove_overlapping(boxes, certs):
+
+	# loop for every image
+	for i in range(len(boxes)):
+		curr_boxes = boxes[i]
+		curr_cert = certs[i]
+		# loop until no more overlap
+		while True:
+			curr_boxes, curr_cert, found_overlap = remove_overlapping(curr_boxes, curr_cert)
+
+			if not found_overlap:
+				break
 
 
