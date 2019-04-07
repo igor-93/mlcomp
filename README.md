@@ -1,4 +1,6 @@
-#EESTech Challenge 2017
+# EESTech Challenge 2017
+
+Face classification & face detection problem solved with random forests.
 
 ## How Do you run the Code
 \<python-dist\> main.py
